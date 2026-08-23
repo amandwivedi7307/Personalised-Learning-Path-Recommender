@@ -1,13 +1,14 @@
 import { useState } from "react";
 import GoalAnalysis from "./GoalAnalysis";
 
+
 function GoalInput() {
   const [goal, setGoal] = useState("");
   const [showAnalysis, setShowAnalysis] = useState(false);
 
   if (showAnalysis) {
-    return <GoalAnalysis />;
-  }
+  return <GoalAnalysis goal={goal} />;
+}
 
   return (
     <div className="goal-page">
@@ -94,7 +95,11 @@ function GoalInput() {
           {/* Analyze Button */}
           <button
             className="analyze-btn"
-            onClick={() => setShowAnalysis(true)}
+            onClick={() => {
+              if (goal.trim()) {
+                setShowAnalysis(true);
+              }
+            }}
           >
             ✨ Analyze My Goal
             <span>→</span>

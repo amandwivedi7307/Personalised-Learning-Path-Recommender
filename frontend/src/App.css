@@ -1592,3 +1592,1693 @@ button {
     width: 100%;
   }
 }
+/* =====================================================
+   LEARNING ROADMAP
+===================================================== */
+
+.roadmap-section {
+  width: 90%;
+  max-width: 1200px;
+  margin: 80px auto;
+}
+
+.roadmap-heading {
+  margin-bottom: 35px;
+}
+
+.roadmap-heading h2 {
+  font-size: 38px;
+  margin: 12px 0;
+  color: #ffffff;
+}
+
+.roadmap-heading p {
+  color: #8d9abc;
+  font-size: 16px;
+  max-width: 700px;
+  line-height: 1.7;
+}
+
+
+/* ROADMAP LIST */
+
+.roadmap-list {
+  background: rgba(15, 20, 48, 0.75);
+  border: 1px solid rgba(120, 100, 255, 0.15);
+  border-radius: 24px;
+  padding: 30px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+.roadmap-wrapper {
+  position: relative;
+}
+
+.roadmap-item {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 25px 20px;
+  border-radius: 18px;
+  transition: 0.3s ease;
+}
+
+.roadmap-item:hover {
+  background: rgba(100, 90, 255, 0.08);
+  transform: translateX(5px);
+}
+
+
+/* NUMBER */
+
+.roadmap-number {
+  min-width: 58px;
+  height: 58px;
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #6c5ce7,
+    #3b82f6
+  );
+
+  box-shadow: 0 8px 25px rgba(91, 76, 230, 0.3);
+}
+
+
+/* CONTENT */
+
+.roadmap-content {
+  flex: 1;
+}
+
+.roadmap-level {
+  display: inline-block;
+
+  padding: 5px 10px;
+
+  border-radius: 8px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #a99cff;
+
+  background: rgba(124, 92, 255, 0.12);
+
+  text-transform: uppercase;
+}
+
+.roadmap-content h3 {
+  margin: 8px 0 5px;
+
+  font-size: 18px;
+
+  color: #ffffff;
+}
+
+.roadmap-content p {
+  margin: 0;
+
+  color: #7783a5;
+
+  font-size: 13px;
+}
+
+
+/* STATUS */
+
+.roadmap-status {
+  padding: 8px 13px;
+
+  border-radius: 10px;
+
+  font-size: 11px;
+  font-weight: 700;
+
+  color: #6ee7b7;
+
+  background: rgba(16, 185, 129, 0.1);
+
+  border: 1px solid rgba(16, 185, 129, 0.2);
+
+  white-space: nowrap;
+}
+
+
+/* CONNECTING LINE */
+
+.roadmap-line {
+  width: 2px;
+  height: 25px;
+
+  margin-left: 49px;
+
+  background: linear-gradient(
+    to bottom,
+    #6657df,
+    rgba(102, 87, 223, 0.05)
+  );
+}
+
+
+/* =====================================================
+   RECOMMENDED COURSES
+===================================================== */
+
+.recommended-section {
+  margin-top: 80px;
+}
+
+.recommended-section h2 {
+  font-size: 36px;
+  color: #ffffff;
+  margin: 12px 0 8px;
+}
+
+.recommended-subtitle {
+  color: #8994b3;
+  margin-bottom: 30px;
+}
+
+
+/* COURSE GRID */
+
+.course-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 22px;
+}
+
+
+/* COURSE CARD */
+
+.course-card {
+  position: relative;
+
+  padding: 26px;
+
+  border-radius: 20px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(20, 27, 60, 0.95),
+    rgba(13, 18, 43, 0.95)
+  );
+
+  border: 1px solid rgba(120, 100, 255, 0.14);
+
+  transition: all 0.3s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+
+  border-color: rgba(124, 92, 255, 0.45);
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(100, 80, 255, 0.08);
+}
+
+
+/* COURSE TOP */
+
+.course-top {
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 18px;
+}
+
+.course-number {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: rgba(102, 87, 223, 0.15);
+
+  color: #a99cff;
+
+  font-weight: 700;
+}
+
+.course-rating {
+  color: #facc15;
+
+  font-size: 14px;
+}
+
+
+/* COURSE TITLE */
+
+.course-card h3 {
+  color: #ffffff;
+
+  font-size: 18px;
+
+  line-height: 1.5;
+
+  margin-bottom: 18px;
+}
+
+
+/* META */
+
+.course-meta {
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 22px;
+}
+
+.course-meta span {
+  padding: 7px 11px;
+
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  color: #9ba6c4;
+
+  font-size: 12px;
+}
+
+
+/* BUTTONS */
+
+.course-buttons {
+  display: flex;
+
+  gap: 10px;
+}
+
+.course-buttons a {
+  flex: 1;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  padding: 11px 14px;
+
+  border-radius: 10px;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  transition: 0.25s ease;
+}
+
+.youtube-btn {
+  color: #ffffff;
+
+  background: rgba(255, 70, 90, 0.12);
+
+  border: 1px solid rgba(255, 70, 90, 0.2);
+}
+
+.youtube-btn:hover {
+  background: rgba(255, 70, 90, 0.22);
+}
+
+.course-btn {
+  color: #ffffff;
+
+  background: linear-gradient(
+    135deg,
+    #6557e8,
+    #3979f6
+  );
+}
+
+.course-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px rgba(75, 80, 230, 0.25);
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 800px) {
+
+  .roadmap-section {
+    width: 94%;
+  }
+
+  .roadmap-item {
+    gap: 15px;
+  }
+
+  .roadmap-status {
+    display: none;
+  }
+
+  .course-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .roadmap-heading h2,
+  .recommended-section h2 {
+    font-size: 28px;
+  }
+
+}
+
+@media (max-width: 500px) {
+
+  .roadmap-list {
+    padding: 15px;
+  }
+
+  .roadmap-item {
+    padding: 18px 10px;
+  }
+
+  .roadmap-number {
+    min-width: 45px;
+    height: 45px;
+    font-size: 14px;
+  }
+
+  .roadmap-content h3 {
+    font-size: 15px;
+  }
+
+  .course-buttons {
+    flex-direction: column;
+  }
+
+}
+/* ROADMAP BUTTON FIX */
+
+.skills-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.skills-card .skill-row {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.skills-card .skill-progress {
+  flex: 1;
+  min-width: 0;
+}
+
+.skills-card .skill-values {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.roadmap-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  width: auto;
+  box-sizing: border-box;
+}
+
+.roadmap-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.youtube-btn {
+  width: 105px;
+}
+
+.course-btn {
+  width: 95px;
+  margin-right: 0;
+}
+/* =========================================
+   ROADMAP - COURSE TEXT / BUTTON FIX
+========================================= */
+
+.skills-card .skill-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Step + Skill */
+.skills-card .skill-name {
+  flex: 0 0 225px;
+  min-width: 225px;
+  max-width: 225px;
+  box-sizing: border-box;
+}
+
+/* Course information - takes available space */
+.skills-card .skill-progress {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: none;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Course title */
+.skills-card .skill-progress strong {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+  line-height: 1.25;
+}
+
+/* Course details */
+.skills-card .skill-progress p {
+  margin-top: 4px;
+  white-space: normal;
+}
+
+/* Buttons area */
+.skills-card .skill-values {
+  flex: 0 0 260px;
+  width: 260px;
+  min-width: 260px;
+  max-width: 260px;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+/* YouTube + Course buttons */
+.roadmap-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Buttons */
+.roadmap-links a {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 46px;
+  box-sizing: border-box;
+  white-space: nowrap;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.youtube-btn {
+  width: 130px;
+}
+
+.course-btn {
+  width: 120px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+
+  .skills-card .skill-row {
+    gap: 16px;
+  }
+
+  .skills-card .skill-name {
+    flex-basis: 180px;
+    min-width: 180px;
+    max-width: 180px;
+  }
+
+  .skills-card .skill-values {
+    flex-basis: 240px;
+    width: 240px;
+    min-width: 240px;
+    max-width: 240px;
+  }
+
+  .youtube-btn {
+    width: 115px;
+  }
+
+  .course-btn {
+    width: 105px;
+  }
+}
+
+
+@media (max-width: 800px) {
+
+  .skills-card .skill-row {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .skills-card .skill-name {
+    flex: 1 1 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .skills-card .skill-progress {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .skills-card .skill-values {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .roadmap-links {
+    justify-content: flex-start;
+  }
+}
+/* =========================================
+   AI ASSISTANT
+========================================= */
+
+.ai-floating-btn {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+
+  width: 60px;
+  height: 60px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #8b5cf6
+  );
+
+  color: white;
+
+  font-size: 26px;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+
+  z-index: 9999;
+
+  transition: 0.2s ease;
+}
+
+.ai-floating-btn:hover {
+  transform: scale(1.08);
+}
+
+
+/* CHAT WINDOW */
+
+.ai-assistant {
+  position: fixed;
+
+  right: 28px;
+  bottom: 28px;
+
+  width: 380px;
+  height: 560px;
+
+  background: #0b1026;
+
+  border: 1px solid #252b4d;
+
+  border-radius: 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.5);
+
+  z-index: 9999;
+}
+
+
+/* HEADER */
+
+.ai-header {
+  padding: 18px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  border-bottom: 1px solid #252b4d;
+
+  background: #101633;
+}
+
+.ai-header strong {
+  display: block;
+
+  color: white;
+
+  font-size: 16px;
+}
+
+.ai-header span {
+  display: block;
+
+  margin-top: 4px;
+
+  color: #8993b8;
+
+  font-size: 12px;
+}
+
+.ai-close {
+  border: none;
+
+  background: transparent;
+
+  color: #aeb6d3;
+
+  font-size: 26px;
+
+  cursor: pointer;
+}
+
+
+/* MESSAGES */
+
+.ai-messages {
+  flex: 1;
+
+  padding: 18px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+.ai-message {
+  max-width: 85%;
+
+  padding: 11px 14px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+
+  line-height: 1.5;
+
+  white-space: pre-wrap;
+}
+
+.bot-message {
+  align-self: flex-start;
+
+  background: #151b39;
+
+  color: #dce2ff;
+
+  border: 1px solid #242b4c;
+}
+
+.user-message {
+  align-self: flex-end;
+
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #7c3aed
+  );
+
+  color: white;
+}
+
+
+/* INPUT */
+
+.ai-input-area {
+  padding: 12px;
+
+  display: flex;
+
+  gap: 8px;
+
+  border-top: 1px solid #252b4d;
+
+  background: #101633;
+}
+
+.ai-input-area textarea {
+  flex: 1;
+
+  resize: none;
+
+  border: 1px solid #30385d;
+
+  border-radius: 10px;
+
+  padding: 10px 12px;
+
+  background: #0b1026;
+
+  color: white;
+
+  outline: none;
+
+  font-size: 13px;
+
+  font-family: inherit;
+}
+
+.ai-input-area textarea::placeholder {
+  color: #687394;
+}
+
+.ai-input-area textarea:focus {
+  border-color: #6366f1;
+}
+
+.ai-input-area button {
+  width: 42px;
+
+  height: 42px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #6366f1;
+
+  color: white;
+
+  font-size: 18px;
+
+  cursor: pointer;
+}
+
+.ai-input-area button:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 500px) {
+
+  .ai-assistant {
+    right: 10px;
+    bottom: 10px;
+
+    width: calc(100% - 20px);
+
+    height: 80vh;
+  }
+
+  .ai-floating-btn {
+    right: 18px;
+    bottom: 18px;
+  }
+
+}
+/* =========================================
+   AI ASSISTANT MARKDOWN
+========================================= */
+
+.ai-message.bot-message {
+  line-height: 1.6;
+  font-size: 14px;
+  word-break: break-word;
+}
+
+/* Paragraph */
+.ai-message.bot-message p {
+  margin: 0 0 10px;
+}
+
+/* Headings */
+.ai-message.bot-message h1,
+.ai-message.bot-message h2,
+.ai-message.bot-message h3 {
+  margin: 12px 0 7px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.ai-message.bot-message h1 {
+  font-size: 18px;
+}
+
+.ai-message.bot-message h2 {
+  font-size: 16px;
+}
+
+.ai-message.bot-message h3 {
+  font-size: 15px;
+}
+
+/* Bold */
+.ai-message.bot-message strong {
+  font-weight: 700;
+}
+
+/* Bullet list */
+.ai-message.bot-message ul {
+  margin: 7px 0 12px;
+  padding-left: 20px;
+}
+
+.ai-message.bot-message ol {
+  margin: 7px 0 12px;
+  padding-left: 22px;
+}
+
+.ai-message.bot-message li {
+  margin: 5px 0;
+  line-height: 1.5;
+}
+
+/* Links */
+.ai-message.bot-message a {
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* Code */
+.ai-message.bot-message code {
+  padding: 2px 5px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+/* Code block */
+.ai-message.bot-message pre {
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 10px 0;
+}
+
+.ai-message.bot-message pre code {
+  padding: 0;
+  background: transparent;
+}
+
+/* Horizontal line */
+.ai-message.bot-message hr {
+  margin: 12px 0;
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+/* =================================
+   AUTHENTICATION PAGES
+================================= */
+
+.auth-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(91, 75, 220, 0.18),
+      transparent 35%
+    ),
+    #050817;
+}
+
+
+.auth-card {
+  width: 100%;
+  max-width: 460px;
+  padding: 42px;
+  box-sizing: border-box;
+
+  background: rgba(15, 20, 45, 0.96);
+
+  border: 1px solid rgba(120, 130, 220, 0.22);
+
+  border-radius: 24px;
+
+  box-shadow:
+    0 25px 80px rgba(0, 0, 0, 0.45);
+}
+
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  font-size: 22px;
+  font-weight: 700;
+
+  margin-bottom: 35px;
+}
+
+
+.auth-logo span {
+  color: #6d63ff;
+}
+
+
+.auth-logo .logo-icon {
+  color: #8b7cff;
+}
+
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+
+.auth-header h1 {
+  margin: 0 0 10px;
+
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+
+.auth-header p {
+  margin: 0;
+
+  color: #8d96b8;
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+.auth-field {
+  margin-bottom: 18px;
+}
+
+
+.auth-field label {
+  display: block;
+
+  margin-bottom: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #c8cee5;
+}
+
+
+.auth-field input {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 14px 15px;
+
+  border-radius: 10px;
+
+  border: 1px solid #293052;
+
+  background: #0b1028;
+
+  color: white;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: 0.2s;
+}
+
+
+.auth-field input:focus {
+  border-color: #6d63ff;
+
+  box-shadow:
+    0 0 0 3px rgba(109, 99, 255, 0.12);
+}
+
+
+.auth-field input::placeholder {
+  color: #68718f;
+}
+
+
+.auth-options {
+  display: flex;
+
+  align-items: center;
+  justify-content: space-between;
+
+  margin: 5px 0 22px;
+
+  font-size: 12px;
+
+  color: #8992b0;
+}
+
+
+.auth-options label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.auth-options input {
+  accent-color: #6d63ff;
+}
+
+
+.forgot-password {
+  border: none;
+  background: none;
+
+  color: #7e75ff;
+
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+
+.auth-submit {
+  width: 100%;
+
+  padding: 14px;
+
+  border: none;
+
+  border-radius: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #6156e8,
+    #4c8cff
+  );
+
+  color: white;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  transition: 0.2s;
+}
+
+
+.auth-submit:hover {
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 10px 25px rgba(76, 100, 255, 0.25);
+}
+
+
+.auth-divider {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  margin: 25px 0;
+
+  color: #555e7d;
+
+  font-size: 11px;
+}
+
+
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: #252b49;
+}
+
+
+.auth-switch {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  font-size: 13px;
+
+  color: #7f88a8;
+}
+
+
+.auth-switch button {
+  border: none;
+
+  background: none;
+
+  color: #7e75ff;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  font-size: 13px;
+}
+
+
+.auth-back {
+  display: block;
+
+  margin: 25px auto 0;
+
+  border: none;
+
+  background: none;
+
+  color: #747e9e;
+
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+
+.auth-back:hover {
+  color: white;
+}
+
+
+/* Mobile */
+
+@media (max-width: 600px) {
+
+  .auth-card {
+    padding: 30px 22px;
+    border-radius: 18px;
+  }
+
+  .auth-header h1 {
+    font-size: 25px;
+  }
+
+}
+/* =========================================
+   AI ASSISTANT
+========================================= */
+
+.ai-floating-btn {
+  position: fixed;
+  right: 28px;
+  bottom: 28px;
+
+  width: 58px;
+  height: 58px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    #7c5cff,
+    #5b8cff
+  );
+
+  color: white;
+  font-size: 25px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 35px rgba(92, 76, 255, 0.45);
+
+  z-index: 9999;
+
+  transition: 0.25s;
+}
+
+.ai-floating-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+}
+
+
+/* CHAT */
+
+.ai-assistant {
+  position: fixed;
+
+  right: 28px;
+  bottom: 28px;
+
+  width: 390px;
+  height: 560px;
+
+  background: #0b1025;
+
+  border: 1px solid #252c4d;
+
+  border-radius: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.55);
+
+  z-index: 9999;
+}
+
+
+/* HEADER */
+
+.ai-header {
+  min-height: 72px;
+
+  padding: 15px 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 1px solid #252c4d;
+
+  background: #111735;
+}
+
+.ai-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ai-header strong {
+  color: white;
+  font-size: 15px;
+}
+
+.ai-header span {
+  color: #8993b8;
+  font-size: 12px;
+}
+
+.ai-close {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+
+  color: #aab2d0;
+
+  font-size: 24px;
+
+  cursor: pointer;
+}
+
+.ai-close:hover {
+  background: #202747;
+  color: white;
+}
+
+
+/* MESSAGES */
+
+.ai-messages {
+  flex: 1;
+
+  padding: 18px;
+
+  overflow-y: auto;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+/* MESSAGE */
+
+.ai-message {
+  max-width: 88%;
+
+  border-radius: 14px;
+
+  padding: 11px 14px;
+
+  font-size: 14px;
+
+  line-height: 1.55;
+
+  word-break: break-word;
+}
+
+
+/* USER */
+
+.user-message {
+  align-self: flex-end;
+
+  background: #635bff;
+
+  color: white;
+
+  border-bottom-right-radius: 4px;
+}
+
+
+/* BOT */
+
+.bot-message {
+  align-self: flex-start;
+
+  background: #171d3a;
+
+  color: #dce2f5;
+
+  border: 1px solid #282f50;
+
+  border-bottom-left-radius: 4px;
+}
+
+
+/* AI PARAGRAPH */
+
+.ai-paragraph {
+  margin: 0 0 7px 0;
+
+  color: #dce2f5;
+
+  line-height: 1.6;
+}
+
+.ai-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+
+/* BOLD */
+
+.bot-message strong {
+  color: white;
+
+  font-weight: 700;
+}
+
+
+/* BULLET */
+
+.ai-bullet {
+  display: flex;
+
+  gap: 9px;
+
+  margin: 7px 0;
+
+  color: #dce2f5;
+
+  line-height: 1.55;
+}
+
+.ai-bullet > span:first-child {
+  color: #8b7cff;
+
+  font-size: 18px;
+
+  line-height: 1.2;
+}
+
+
+/* NUMBERED */
+
+.ai-numbered {
+  display: flex;
+
+  gap: 9px;
+
+  margin: 8px 0;
+
+  line-height: 1.55;
+}
+
+.ai-number {
+  min-width: 22px;
+  height: 22px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #292353;
+
+  color: #a99cff;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* EMPTY LINE */
+
+.ai-space {
+  height: 3px;
+}
+
+
+/* THINKING */
+
+.ai-thinking {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+}
+
+.ai-thinking span {
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+
+  background: #8b7cff;
+
+  animation: ai-bounce 1.2s infinite;
+}
+
+.ai-thinking span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ai-thinking span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.ai-thinking label {
+  margin-left: 5px;
+
+  color: #8993b8;
+
+  font-size: 12px;
+}
+
+@keyframes ai-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+
+/* INPUT */
+
+.ai-input-area {
+  padding: 12px;
+
+  display: flex;
+
+  gap: 8px;
+
+  border-top: 1px solid #252c4d;
+
+  background: #0f1430;
+}
+
+.ai-input-area textarea {
+  flex: 1;
+
+  resize: none;
+
+  min-height: 42px;
+  max-height: 100px;
+
+  padding: 11px 12px;
+
+  border-radius: 10px;
+
+  border: 1px solid #30385d;
+
+  background: #171d3a;
+
+  color: white;
+
+  outline: none;
+
+  font-family: inherit;
+
+  font-size: 13px;
+}
+
+.ai-input-area textarea::placeholder {
+  color: #687294;
+}
+
+.ai-input-area textarea:focus {
+  border-color: #756aff;
+}
+
+
+/* SEND */
+
+.ai-input-area button {
+  width: 42px;
+  height: 42px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: #6d5dfc;
+
+  color: white;
+
+  font-size: 18px;
+
+  cursor: pointer;
+
+  align-self: flex-end;
+}
+
+.ai-input-area button:hover {
+  background: #7c6dff;
+}
+
+.ai-input-area button:disabled {
+  opacity: 0.4;
+
+  cursor: not-allowed;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .ai-assistant {
+    right: 10px;
+    bottom: 10px;
+
+    width: calc(100vw - 20px);
+
+    height: 75vh;
+  }
+
+  .ai-floating-btn {
+    right: 18px;
+    bottom: 18px;
+  }
+
+}

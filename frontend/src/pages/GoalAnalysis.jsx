@@ -1,60 +1,99 @@
+import { useEffect, useState } from "react";
 import "../App.css";
+import Roadmap from "./Roadmap";
+import AIAssistant from "../components/AIAssistant";
 
-function GoalAnalysis() {
-  const data = {
-    goal: "Data Scientist",
-    timeline_days: 100,
-    current_level: "Beginner",
-    current_readiness: 28,
+function GoalAnalysis({ goal }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showRoadmap, setShowRoadmap] = useState(false);
 
-    skills: [
-      {
-        name: "Python",
-        current: 70,
-        required: 90,
-        status: "Strong",
-        type: "strong",
-      },
-      {
-        name: "Statistics",
-        current: 25,
-        required: 80,
-        status: "Needs Work",
-        type: "warning",
-      },
-      {
-        name: "SQL",
-        current: 20,
-        required: 80,
-        status: "Needs Work",
-        type: "warning",
-      },
-      {
-        name: "Machine Learning",
-        current: 10,
-        required: 90,
-        status: "Major Gap",
-        type: "danger",
-      },
-      {
-        name: "Data Visualization",
-        current: 30,
-        required: 75,
-        status: "Needs Work",
-        type: "warning",
-      },
-      {
-        name: "Deep Learning",
-        current: 0,
-        required: 65,
-        status: "Not Started",
-        type: "danger",
-      },
-    ],
+  useEffect(() => {
+    const analyzeGoal = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/recommend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: "Learner",
+            goal: goal,
+            current_skills: {},
+          }),
+        });
 
-    insight:
-      "Your strongest foundation is Python. Your biggest gaps are Machine Learning, Statistics and SQL. These skills will be prioritized in your personalized roadmap.",
-  };
+        if (!response.ok) {
+          throw new Error("Backend request failed");
+        }
+
+        const result = await response.json();
+
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
+        setData(result);
+      } catch (err) {
+        console.error(err);
+        setError("Unable to connect with AI backend.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    analyzeGoal();
+  }, [goal]);
+
+  // Loading
+  if (loading) {
+    return (
+      <div className="analysis-page">
+        <div className="analysis-heading">
+          <div className="analysis-badge">
+            ✨ AI ANALYZING
+          </div>
+
+          <h1>
+            Understanding your <span>goal...</span>
+          </h1>
+
+          <p>
+            Our AI is identifying the skills you need
+            and building your personalized analysis.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error
+  if (error) {
+    return (
+      <div className="analysis-page">
+        <div className="analysis-heading">
+          <div className="analysis-badge">
+            ⚠️ ERROR
+          </div>
+
+          <h1>
+            Something went <span>wrong.</span>
+          </h1>
+
+          <p>{error}</p>
+
+          <p>
+            Make sure your FastAPI backend is running on
+            http://127.0.0.1:8000
+          </p>
+        </div>
+      </div>
+    );
+  }
+  if (showRoadmap) {
+  return <Roadmap data={data} />;
+  }
 
   return (
     <div className="analysis-page">
@@ -113,15 +152,15 @@ function GoalAnalysis() {
 
         <SummaryCard
           icon="⚡"
-          title="CURRENT LEVEL"
-          value={data.current_level}
+          title="CURRENT READINESS"
+          value={`${data.overall_readiness}%`}
           color="green"
         />
 
       </div>
 
 
-      {/* SKILL GAP SECTION */}
+      {/* SKILL GAP */}
       <div className="skill-section">
 
         <div className="section-title">
@@ -144,7 +183,7 @@ function GoalAnalysis() {
           <div className="overall-score">
 
             <strong>
-              {data.current_readiness}%
+              {data.overall_readiness}%
             </strong>
 
             <span>
@@ -156,17 +195,17 @@ function GoalAnalysis() {
         </div>
 
 
-        {/* SKILL LIST */}
+        {/* SKILLS */}
         <div className="skills-card">
 
-          {data.skills.map((skill, index) => (
+          {data.skills?.map((skill, index) => (
             <Skill
               key={index}
               name={skill.name}
-              current={skill.current}
-              required={skill.required}
+              current={skill.current_percentage}
+              required={skill.required_percentage}
               status={skill.status}
-              type={skill.type}
+              type={getSkillType(skill.status)}
             />
           ))}
 
@@ -197,33 +236,36 @@ function GoalAnalysis() {
       </div>
 
 
-      {/* ROADMAP ACTION */}
+      {/* COURSE SUMMARY */}
       <div className="analysis-action">
 
         <div>
 
           <h3>
-            Ready to build your roadmap?
+            {data.recommended_courses?.length || 0} courses found
           </h3>
 
           <p>
-            We'll turn these skill gaps into a
-            personalized learning journey.
+            AI matched courses from your learning dataset
+            with your skill gaps.
           </p>
 
         </div>
 
-        <button className="roadmap-btn">
-
+        <button
+          className="roadmap-btn"
+          onClick={() => setShowRoadmap(true)}
+        >
           Generate My {data.timeline_days}-Day Roadmap
-
-          <span>
-            →
-          </span>
-
+          <span>→</span>
         </button>
 
       </div>
+      <AIAssistant
+        goal={data.goal}
+        skills={data.skills}
+        roadmap={data.learning_roadmap}
+      />
 
     </div>
   );
@@ -262,7 +304,7 @@ function SummaryCard({
 }
 
 
-/* ================= SKILL COMPONENT ================= */
+/* ================= SKILL ================= */
 
 function Skill({
   name,
@@ -274,7 +316,6 @@ function Skill({
   return (
     <div className="skill-row">
 
-      {/* Skill Name */}
       <div className="skill-name">
 
         <strong>
@@ -288,11 +329,11 @@ function Skill({
       </div>
 
 
-      {/* Progress Bar */}
       <div className="skill-progress">
 
         <div className="progress-track">
 
+          {/* CURRENT SKILL */}
           <div
             className={`progress-fill ${type}`}
             style={{
@@ -305,7 +346,6 @@ function Skill({
       </div>
 
 
-      {/* Percentage */}
       <div className="skill-values">
 
         <span>
@@ -320,6 +360,30 @@ function Skill({
 
     </div>
   );
+}
+
+
+/* ================= STATUS COLOR ================= */
+
+function getSkillType(status) {
+
+  switch (status) {
+
+    case "Strong":
+      return "strong";
+
+    case "Needs Work":
+      return "warning";
+
+    case "Major Gap":
+      return "danger";
+
+    case "Not Started":
+      return "danger";
+
+    default:
+      return "warning";
+  }
 }
 
 
