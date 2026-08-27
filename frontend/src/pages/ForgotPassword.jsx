@@ -21,6 +21,11 @@ function ForgotPassword({ onBack }) {
       setLoading(true);
       setMessage("");
 
+      console.log(
+        "Calling forgot-password:",
+        "https://skillroute-ai-qpwc.onrender.com/forgot-password"
+      );
+
       const response = await fetch(
         "https://skillroute-ai-qpwc.onrender.com/forgot-password",
         {
@@ -31,7 +36,7 @@ function ForgotPassword({ onBack }) {
           },
 
           body: JSON.stringify({
-            email: email,
+            email: email.trim(),
           }),
         }
       );
