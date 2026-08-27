@@ -1,7 +1,12 @@
 import { useState } from "react";
 import "../App.css";
 
-function Login({ onLogin, onSignup, onBack }) {
+function Login({
+  onLogin,
+  onSignup,
+  onBack,
+  onForgotPassword,
+}) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,15 +19,14 @@ function Login({ onLogin, onSignup, onBack }) {
   // LOGIN
   // =========================
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
 
     e.preventDefault();
 
     setError("");
 
 
-    // Validation
-    if (!email.trim() || !password) {
+    if (!email || !password) {
 
       setError(
         "Please enter your email and password."
@@ -32,14 +36,10 @@ function Login({ onLogin, onSignup, onBack }) {
     }
 
 
-    setLoading(true);
-
-
     try {
 
-      // =========================
-      // CALL FASTAPI
-      // =========================
+      setLoading(true);
+
 
       const response = await fetch(
         "http://127.0.0.1:8000/login",
@@ -51,24 +51,21 @@ function Login({ onLogin, onSignup, onBack }) {
           },
 
           body: JSON.stringify({
-            email: email.trim(),
+            email: email,
             password: password,
           }),
         }
       );
 
 
-      const data = await response.json();
+      const result =
+        await response.json();
 
-
-      // =========================
-      // LOGIN FAILED
-      // =========================
 
       if (!response.ok) {
 
         throw new Error(
-          data.detail ||
+          result.detail ||
           "Invalid email or password."
         );
 
@@ -79,34 +76,16 @@ function Login({ onLogin, onSignup, onBack }) {
       // LOGIN SUCCESS
       // =========================
 
-      console.log(
-        "Login successful:",
-        data.user
-      );
-
-
-      // Save logged-in user
-      localStorage.setItem(
-        "skillroute_user",
-        JSON.stringify(data.user)
-      );
-
-
-      // Send user to App.jsx
-      onLogin(data.user);
+      onLogin(result.user);
 
 
     } catch (err) {
 
-      console.error(
-        "Login error:",
-        err
-      );
-
+      console.error(err);
 
       setError(
         err.message ||
-        "Unable to connect with server."
+        "Unable to login."
       );
 
     } finally {
@@ -122,22 +101,7 @@ function Login({ onLogin, onSignup, onBack }) {
 
     <div className="auth-page">
 
-      <div className="auth-card">
-
-
-        {/* =========================
-            LOGO
-        ========================= */}
-
-        <div className="auth-logo">
-
-          <div className="logo-icon">
-            ✦
-          </div>
-
-          SkillRoute <span>AI</span>
-
-        </div>
+      <div className="auth-container">
 
 
         {/* =========================
@@ -146,43 +110,58 @@ function Login({ onLogin, onSignup, onBack }) {
 
         <div className="auth-header">
 
+          <div className="auth-logo">
+
+            <div className="logo-icon">
+              ✦
+            </div>
+
+            SkillRoute <span>AI</span>
+
+          </div>
+
+
           <h1>
-            Welcome back 👋
+            Welcome <span>back.</span>
           </h1>
 
+
           <p>
-            Continue your personalized
-            learning journey.
+            Sign in to continue your
+            personalized learning journey.
           </p>
 
         </div>
 
-
-        {/* =========================
-            ERROR
-        ========================= */}
-
-        {error && (
-
-          <div className="auth-error">
-
-            ⚠️ {error}
-
-          </div>
-
-        )}
 
 
         {/* =========================
             FORM
         ========================= */}
 
-        <form onSubmit={handleSubmit}>
+        <form
+          className="auth-form"
+          onSubmit={handleLogin}
+        >
+
+
+          {/* ERROR */}
+
+          {error && (
+
+            <div className="auth-error">
+
+              ⚠️ {error}
+
+            </div>
+
+          )}
+
 
 
           {/* EMAIL */}
 
-          <div className="auth-field">
+          <div className="form-group">
 
             <label>
               Email
@@ -201,9 +180,10 @@ function Login({ onLogin, onSignup, onBack }) {
           </div>
 
 
+
           {/* PASSWORD */}
 
-          <div className="auth-field">
+          <div className="form-group">
 
             <label>
               Password
@@ -222,7 +202,10 @@ function Login({ onLogin, onSignup, onBack }) {
           </div>
 
 
-          {/* OPTIONS */}
+
+          {/* =========================
+              OPTIONS
+          ========================= */}
 
           <div className="auth-options">
 
@@ -237,93 +220,80 @@ function Login({ onLogin, onSignup, onBack }) {
             </label>
 
 
+            {/* FORGOT PASSWORD */}
+
             <button
               type="button"
               className="forgot-password"
-              onClick={() =>
-                alert(
-                  "Password reset will be added soon."
-                )
-              }
+              onClick={onForgotPassword}
+              disabled={loading}
             >
+
               Forgot password?
+
             </button>
 
           </div>
 
 
-          {/* LOGIN BUTTON */}
+
+          {/* =========================
+              LOGIN BUTTON
+          ========================= */}
 
           <button
             type="submit"
-            className="auth-submit"
+            className="auth-button"
             disabled={loading}
           >
 
-            {loading ? (
+            {loading
+              ? "Signing in..."
+              : "Sign In →"}
 
-              "Signing in..."
+          </button>
 
-            ) : (
 
-              <>
-                Sign In
-                <span>→</span>
-              </>
 
-            )}
+          {/* =========================
+              SIGNUP
+          ========================= */}
+
+          <div className="auth-switch">
+
+            Don't have an account?
+
+            <button
+              type="button"
+              onClick={onSignup}
+              disabled={loading}
+            >
+
+              Create account
+
+            </button>
+
+          </div>
+
+
+
+          {/* =========================
+              BACK
+          ========================= */}
+
+          <button
+            type="button"
+            className="auth-back"
+            onClick={onBack}
+            disabled={loading}
+          >
+
+            ← Back to Home
 
           </button>
 
 
         </form>
-
-
-        {/* =========================
-            DIVIDER
-        ========================= */}
-
-        <div className="auth-divider">
-
-          <span>
-            OR
-          </span>
-
-        </div>
-
-
-        {/* =========================
-            SIGNUP
-        ========================= */}
-
-        <div className="auth-switch">
-
-          <span>
-            Don't have an account?
-          </span>
-
-          <button
-            onClick={onSignup}
-            disabled={loading}
-          >
-            Create account
-          </button>
-
-        </div>
-
-
-        {/* =========================
-            BACK
-        ========================= */}
-
-        <button
-          className="auth-back"
-          onClick={onBack}
-          disabled={loading}
-        >
-          ← Back to home
-        </button>
-
 
       </div>
 

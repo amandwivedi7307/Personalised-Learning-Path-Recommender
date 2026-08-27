@@ -3,8 +3,10 @@ import { useState } from "react";
 import GoalInput from "./pages/GoalInput";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-
+import Dashboard from "./pages/Dashboard";
 import "./App.css";
+import ResetPassword from "./pages/ResetPassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -17,9 +19,20 @@ function App() {
     goal
   */
 
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState(() => {
+
+    const path = window.location.pathname;
+
+    if (path.startsWith("/reset-password/")) {
+      return "reset-password";
+    }
+
+    return "home";
+
+  });
 
   const [user, setUser] = useState(null);
+  const [dashboardData, setDashboardData] = useState(null);
 
 
   // =========================
@@ -28,9 +41,19 @@ function App() {
 
   const handleLogin = (userData) => {
 
+    console.log("LOGIN USER:", userData);
+
     setUser(userData);
 
-    // Login ke baad Goal Input
+    if (userData?.id) {
+
+      localStorage.setItem(
+        "user_id",
+        String(userData.id)
+      );
+
+    }
+
     setPage("goal");
 
   };
@@ -42,12 +65,50 @@ function App() {
 
   const handleSignup = (userData) => {
 
+    console.log("SIGNUP USER:", userData);
+
     setUser(userData);
 
-    // Signup ke baad Goal Input
+    if (userData?.id) {
+
+      localStorage.setItem(
+        "user_id",
+        String(userData.id)
+      );
+
+    }
+
     setPage("goal");
 
   };
+  // =========================
+  // FORGOT PASSWORD
+  // =========================
+
+  if (page === "forgot-password") {
+
+    return (
+      <ForgotPassword
+        onBack={() => {
+          setPage("login");
+        }}
+      />
+    );
+
+  }
+  // =========================
+  // RESET PASSWORD PAGE
+  // =========================
+
+  if (page === "reset-password") {
+    return (
+      <ResetPassword
+        onBack={() => {
+          setPage("login");
+        }}
+      />
+    );
+  }
 
 
   // =========================
@@ -55,13 +116,27 @@ function App() {
   // =========================
 
   if (page === "goal") {
-
     return (
       <GoalInput
         user={user}
+        onAnalysisComplete={(analysisData) => {
+          setDashboardData(analysisData);
+          setPage("dashboard");
+        }}
       />
     );
+  }
+  // =========================
+  // DASHBOARD PAGE
+  // =========================
 
+  if (page === "dashboard") {
+    return (
+      <Dashboard
+        data={dashboardData}
+        user={user}
+      />
+    );
   }
 
 
@@ -81,6 +156,10 @@ function App() {
 
         onBack={() => {
           setPage("home");
+        }}
+
+        onForgotPassword={() => {
+          setPage("forgot-password");
         }}
       />
     );
@@ -145,7 +224,7 @@ function App() {
           </a>
 
           <a href="#how-it-works">
-            How It Works
+            
           </a>
 
           <a href="#features">

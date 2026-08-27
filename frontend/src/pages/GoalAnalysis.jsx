@@ -1,43 +1,51 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 import Roadmap from "./Roadmap";
+import Dashboard from "./Dashboard";
 import AIAssistant from "../components/AIAssistant";
 
-function GoalAnalysis({ goal }) {
+function GoalAnalysis({ goal, onAnalysisComplete }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showRoadmap, setShowRoadmap] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
 
   useEffect(() => {
     const analyzeGoal = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/recommend", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            name: "Learner",
-            goal: goal,
-            current_skills: {},
-          }),
-        });
+        const response = await fetch(
+          "http://127.0.0.1:8000/recommend",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              name: "Learner",
+              goal: goal,
+              current_skills: {},
+            }),
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Backend request failed");
         }
 
         const result = await response.json();
+        
 
         if (result.error) {
           throw new Error(result.error);
         }
 
         setData(result);
+
       } catch (err) {
         console.error(err);
         setError("Unable to connect with AI backend.");
+
       } finally {
         setLoading(false);
       }
@@ -46,11 +54,17 @@ function GoalAnalysis({ goal }) {
     analyzeGoal();
   }, [goal]);
 
-  // Loading
+
+  // =========================
+  // LOADING
+  // =========================
+
   if (loading) {
     return (
       <div className="analysis-page">
+
         <div className="analysis-heading">
+
           <div className="analysis-badge">
             ✨ AI ANALYZING
           </div>
@@ -63,16 +77,24 @@ function GoalAnalysis({ goal }) {
             Our AI is identifying the skills you need
             and building your personalized analysis.
           </p>
+
         </div>
+
       </div>
     );
   }
 
-  // Error
+
+  // =========================
+  // ERROR
+  // =========================
+
   if (error) {
     return (
       <div className="analysis-page">
+
         <div className="analysis-heading">
+
           <div className="analysis-badge">
             ⚠️ ERROR
           </div>
@@ -81,29 +103,66 @@ function GoalAnalysis({ goal }) {
             Something went <span>wrong.</span>
           </h1>
 
-          <p>{error}</p>
+          <p>
+            {error}
+          </p>
 
           <p>
             Make sure your FastAPI backend is running on
             http://127.0.0.1:8000
           </p>
+
         </div>
+
       </div>
     );
   }
-  if (showRoadmap) {
-  return <Roadmap data={data} />;
+
+
+  // =========================
+  // ROADMAP
+  // =========================
+
+  if (showDashboard) {
+    return (
+      <Dashboard
+        data={data}
+        user={{ name: "Learner" }}
+      />
+    );
   }
+
+  if (showRoadmap) {
+    return (
+      <Roadmap
+        data={data}
+        onBack={() => setShowRoadmap(false)}
+      />
+    );
+  }
+
+
+  // =========================
+  // ANALYSIS
+  // =========================
 
   return (
     <div className="analysis-page">
 
-      {/* TOP BAR */}
+      {/* =========================
+          TOP BAR
+      ========================= */}
+
       <div className="analysis-top">
 
         <div className="analysis-logo">
-          <div className="logo-icon">✦</div>
+
+          <div className="logo-icon">
+            ✦
+          </div>
+
           SkillRoute <span>AI</span>
+
         </div>
 
         <div className="analysis-status">
@@ -113,7 +172,10 @@ function GoalAnalysis({ goal }) {
       </div>
 
 
-      {/* HEADING */}
+      {/* =========================
+          HEADING
+      ========================= */}
+
       <div className="analysis-heading">
 
         <div className="analysis-badge">
@@ -133,7 +195,10 @@ function GoalAnalysis({ goal }) {
       </div>
 
 
-      {/* SUMMARY CARDS */}
+      {/* =========================
+          SUMMARY CARDS
+      ========================= */}
+
       <div className="analysis-summary">
 
         <SummaryCard
@@ -160,7 +225,10 @@ function GoalAnalysis({ goal }) {
       </div>
 
 
-      {/* SKILL GAP */}
+      {/* =========================
+          SKILL GAP
+      ========================= */}
+
       <div className="skill-section">
 
         <div className="section-title">
@@ -171,7 +239,9 @@ function GoalAnalysis({ goal }) {
               AI SKILL GAP ANALYSIS
             </div>
 
-            <h2>What you need to learn</h2>
+            <h2>
+              What you need to learn
+            </h2>
 
             <p>
               Based on your goal, AI mapped the skills required
@@ -195,10 +265,14 @@ function GoalAnalysis({ goal }) {
         </div>
 
 
-        {/* SKILLS */}
+        {/* =========================
+            SKILLS
+        ========================= */}
+
         <div className="skills-card">
 
           {data.skills?.map((skill, index) => (
+
             <Skill
               key={index}
               name={skill.name}
@@ -207,6 +281,7 @@ function GoalAnalysis({ goal }) {
               status={skill.status}
               type={getSkillType(skill.status)}
             />
+
           ))}
 
         </div>
@@ -214,7 +289,10 @@ function GoalAnalysis({ goal }) {
       </div>
 
 
-      {/* AI INSIGHT */}
+      {/* =========================
+          AI INSIGHT
+      ========================= */}
+
       <div className="ai-insight">
 
         <div className="insight-icon">
@@ -236,7 +314,10 @@ function GoalAnalysis({ goal }) {
       </div>
 
 
-      {/* COURSE SUMMARY */}
+      {/* =========================
+          DASHBOARD ACTION
+      ========================= */}
+
       <div className="analysis-action">
 
         <div>
@@ -254,13 +335,19 @@ function GoalAnalysis({ goal }) {
 
         <button
           className="roadmap-btn"
-          onClick={() => setShowRoadmap(true)}
+          onClick={() => setShowDashboard(true)}
         >
-          Generate My {data.timeline_days}-Day Roadmap
+          View My Dashboard
           <span>→</span>
         </button>
 
       </div>
+
+
+      {/* =========================
+          AI ASSISTANT
+      ========================= */}
+
       <AIAssistant
         goal={data.goal}
         skills={data.skills}
@@ -272,7 +359,9 @@ function GoalAnalysis({ goal }) {
 }
 
 
-/* ================= SUMMARY CARD ================= */
+/* =========================
+   SUMMARY CARD
+========================= */
 
 function SummaryCard({
   icon,
@@ -280,6 +369,7 @@ function SummaryCard({
   value,
   color,
 }) {
+
   return (
     <div className="summary-card">
 
@@ -304,7 +394,9 @@ function SummaryCard({
 }
 
 
-/* ================= SKILL ================= */
+/* =========================
+   SKILL
+========================= */
 
 function Skill({
   name,
@@ -313,6 +405,7 @@ function Skill({
   status,
   type,
 }) {
+
   return (
     <div className="skill-row">
 
@@ -333,13 +426,12 @@ function Skill({
 
         <div className="progress-track">
 
-          {/* CURRENT SKILL */}
           <div
             className={`progress-fill ${type}`}
             style={{
               width: `${current}%`,
             }}
-          ></div>
+          />
 
         </div>
 
@@ -363,7 +455,9 @@ function Skill({
 }
 
 
-/* ================= STATUS COLOR ================= */
+/* =========================
+   STATUS COLOR
+========================= */
 
 function getSkillType(status) {
 

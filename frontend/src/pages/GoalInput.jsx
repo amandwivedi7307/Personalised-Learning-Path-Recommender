@@ -2,13 +2,18 @@ import { useState } from "react";
 import GoalAnalysis from "./GoalAnalysis";
 
 
-function GoalInput() {
+function GoalInput({ user, onAnalysisComplete }) {
   const [goal, setGoal] = useState("");
   const [showAnalysis, setShowAnalysis] = useState(false);
 
   if (showAnalysis) {
-  return <GoalAnalysis goal={goal} />;
-}
+    return (
+      <GoalAnalysis
+        goal={goal}
+        onAnalysisComplete={onAnalysisComplete}
+      />
+    );
+  }
 
   return (
     <div className="goal-page">

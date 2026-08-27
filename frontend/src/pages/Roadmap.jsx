@@ -1,19 +1,38 @@
 import "../App.css";
 import AIAssistant from "../components/AIAssistant";
 
-function Roadmap({ data }) {
+function Roadmap({ data, onBack }) {
   return (
     <div className="analysis-page">
 
       <div className="analysis-top">
+
         <div className="analysis-logo">
           <div className="logo-icon">✦</div>
           SkillRoute <span>AI</span>
         </div>
 
-        <div className="analysis-status">
-          🚀 Personalized Roadmap
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+          }}
+        >
+
+          <button
+            className="roadmap-back-btn"
+            onClick={onBack}
+          >
+            ← Dashboard
+          </button>
+
+          <div className="analysis-status">
+            🚀 Personalized Roadmap
+          </div>
+
         </div>
+
       </div>
 
       <div className="analysis-heading">

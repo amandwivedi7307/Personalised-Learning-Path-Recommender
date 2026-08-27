@@ -8,7 +8,7 @@ from auth import router as auth_router
 import pandas as pd
 from dotenv import load_dotenv
 from groq import Groq
-
+from progress import router as progress_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -36,7 +36,7 @@ app = FastAPI(
 )
 init_db()
 app.include_router(auth_router)
-
+app.include_router(progress_router)
 
 app.add_middleware(
     CORSMiddleware,
