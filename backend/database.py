@@ -1,27 +1,122 @@
+import os
 import sqlite3
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+SQLITE_DATABASE = "skillroute.db"
 
 
-DATABASE = "skillroute.db"
-
+# =========================================================
+# DATABASE CONNECTION
+# =========================================================
 
 def get_db():
 
-    conn = sqlite3.connect(DATABASE)
+    # -----------------------------------------------------
+    # PRODUCTION → PostgreSQL / Neon
+    # -----------------------------------------------------
+    if DATABASE_URL:
+
+        import psycopg2
+        from psycopg2.extras import RealDictCursor
+
+        conn = psycopg2.connect(
+            DATABASE_URL,
+            cursor_factory=RealDictCursor
+        )
+
+        return conn
+
+    # -----------------------------------------------------
+    # LOCAL DEVELOPMENT → SQLite
+    # -----------------------------------------------------
+
+    conn = sqlite3.connect(SQLITE_DATABASE)
 
     conn.row_factory = sqlite3.Row
 
     return conn
 
 
+# =========================================================
+# INITIALIZE DATABASE
+# =========================================================
+
 def init_db():
 
-    conn = get_db()
+    # =====================================================
+    # POSTGRESQL
+    # =====================================================
 
+    if DATABASE_URL:
+
+        conn = get_db()
+        cursor = conn.cursor()
+
+        # -------------------------------------------------
+        # USERS TABLE
+        # -------------------------------------------------
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+
+                id SERIAL PRIMARY KEY,
+
+                name TEXT NOT NULL,
+
+                email TEXT UNIQUE NOT NULL,
+
+                password TEXT NOT NULL,
+
+                reset_token TEXT,
+
+                reset_token_expiry DOUBLE PRECISION
+
+            )
+        """)
+
+        # -------------------------------------------------
+        # COURSE PROGRESS TABLE
+        # -------------------------------------------------
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS course_progress (
+
+                id SERIAL PRIMARY KEY,
+
+                user_id INTEGER NOT NULL,
+
+                course_id TEXT NOT NULL,
+
+                completed BOOLEAN DEFAULT FALSE,
+
+                UNIQUE(user_id, course_id),
+
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+
+            )
+        """)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return
+
+    # =====================================================
+    # SQLITE
+    # =====================================================
+
+    conn = get_db()
     cursor = conn.cursor()
 
-    # =========================
+    # -----------------------------------------------------
     # USERS TABLE
-    # =========================
+    # -----------------------------------------------------
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -37,9 +132,9 @@ def init_db():
         )
     """)
 
-    # =========================
-    # ADD RESET TOKEN
-    # =========================
+    # -----------------------------------------------------
+    # RESET TOKEN
+    # -----------------------------------------------------
 
     try:
 
@@ -50,13 +145,11 @@ def init_db():
 
     except sqlite3.OperationalError:
 
-        # Column already exists
         pass
 
-
-    # =========================
-    # ADD TOKEN EXPIRY
-    # =========================
+    # -----------------------------------------------------
+    # RESET TOKEN EXPIRY
+    # -----------------------------------------------------
 
     try:
 
@@ -67,12 +160,11 @@ def init_db():
 
     except sqlite3.OperationalError:
 
-        # Column already exists
         pass
 
-    # =========================
+    # -----------------------------------------------------
     # COURSE PROGRESS TABLE
-    # =========================
+    # -----------------------------------------------------
 
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS course_progress (
@@ -93,7 +185,5 @@ def init_db():
         )
     """)
 
-
     conn.commit()
-
     conn.close()

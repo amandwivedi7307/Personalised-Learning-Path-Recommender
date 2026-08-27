@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+python-dotenv
+bcrypt
+fastapi-mail
+psycopg2-binary
+pandas
+numpy
+scikit-learn
+groq

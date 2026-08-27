@@ -12,10 +12,13 @@ from database import get_db
 
 
 load_dotenv()
+
 router = APIRouter()
-# =========================
+
+
+# =========================================================
 # EMAIL CONFIGURATION
-# =========================
+# =========================================================
 
 mail_config = ConnectionConfig(
     MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
@@ -31,20 +34,15 @@ mail_config = ConnectionConfig(
     USE_CREDENTIALS=True,
 )
 
-
-
 fm = FastMail(mail_config)
 
 
-
-# =========================
+# =========================================================
 # PASSWORD FUNCTIONS
-# =========================
+# =========================================================
 
 def hash_password(password: str) -> str:
-    """
-    Hash password using bcrypt.
-    """
+
     password_bytes = password.encode("utf-8")
 
     hashed = bcrypt.hashpw(
@@ -55,19 +53,20 @@ def hash_password(password: str) -> str:
     return hashed.decode("utf-8")
 
 
-def verify_password(password: str, hashed_password: str) -> bool:
-    """
-    Verify entered password against stored hash.
-    """
+def verify_password(
+    password: str,
+    hashed_password: str
+) -> bool:
+
     return bcrypt.checkpw(
         password.encode("utf-8"),
         hashed_password.encode("utf-8")
     )
 
 
-# =========================
+# =========================================================
 # REQUEST MODELS
-# =========================
+# =========================================================
 
 class SignupRequest(BaseModel):
 
@@ -81,14 +80,21 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+
 class ForgotPasswordRequest(BaseModel):
 
     email: str
 
 
-# =========================
+class ResetPasswordRequest(BaseModel):
+
+    token: str
+    new_password: str
+
+
+# =========================================================
 # SIGNUP
-# =========================
+# =========================================================
 
 @router.post("/signup")
 def signup(data: SignupRequest):
@@ -96,55 +102,133 @@ def signup(data: SignupRequest):
     conn = get_db()
     cursor = conn.cursor()
 
-    # Check existing user
-    cursor.execute(
-        "SELECT id FROM users WHERE email = ?",
-        (data.email,)
-    )
+    try:
 
-    existing_user = cursor.fetchone()
+        # -------------------------------------------------
+        # CHECK EXISTING USER
+        # -------------------------------------------------
 
-    if existing_user:
+        if os.getenv("DATABASE_URL"):
 
-        conn.close()
+            cursor.execute(
+                """
+                SELECT id
+                FROM users
+                WHERE email = %s
+                """,
+                (data.email,)
+            )
+
+        else:
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM users
+                WHERE email = ?
+                """,
+                (data.email,)
+            )
+
+        existing_user = cursor.fetchone()
+
+        if existing_user:
+
+            raise HTTPException(
+                status_code=400,
+                detail="An account with this email already exists."
+            )
+
+        # -------------------------------------------------
+        # PASSWORD LENGTH
+        # -------------------------------------------------
+
+        if len(data.password.encode("utf-8")) > 72:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Password must be 72 bytes or shorter."
+            )
+
+        # -------------------------------------------------
+        # HASH PASSWORD
+        # -------------------------------------------------
+
+        hashed_password = hash_password(
+            data.password
+        )
+
+        # -------------------------------------------------
+        # INSERT USER
+        # -------------------------------------------------
+
+        if os.getenv("DATABASE_URL"):
+
+            cursor.execute(
+                """
+                INSERT INTO users
+                (
+                    name,
+                    email,
+                    password
+                )
+
+                VALUES (%s, %s, %s)
+
+                RETURNING id
+                """,
+                (
+                    data.name,
+                    data.email,
+                    hashed_password
+                )
+            )
+
+            user_id = cursor.fetchone()["id"]
+
+        else:
+
+            cursor.execute(
+                """
+                INSERT INTO users
+                (
+                    name,
+                    email,
+                    password
+                )
+
+                VALUES (?, ?, ?)
+                """,
+                (
+                    data.name,
+                    data.email,
+                    hashed_password
+                )
+            )
+
+            user_id = cursor.lastrowid
+
+        conn.commit()
+
+    except HTTPException:
+        conn.rollback()
+        raise
+
+    except Exception as error:
+
+        conn.rollback()
+
+        print("SIGNUP ERROR:", error)
 
         raise HTTPException(
-            status_code=400,
-            detail="An account with this email already exists."
+            status_code=500,
+            detail="Unable to create account."
         )
 
-    # Check password length
-    if len(data.password.encode("utf-8")) > 72:
+    finally:
 
+        cursor.close()
         conn.close()
-
-        raise HTTPException(
-            status_code=400,
-            detail="Password must be 72 bytes or shorter."
-        )
-
-    # Hash password
-    hashed_password = hash_password(data.password)
-
-    # Save user
-    cursor.execute(
-        """
-        INSERT INTO users
-        (name, email, password)
-        VALUES (?, ?, ?)
-        """,
-        (
-            data.name,
-            data.email,
-            hashed_password
-        )
-    )
-
-    conn.commit()
-
-    user_id = cursor.lastrowid
-
-    conn.close()
 
     return {
         "success": True,
@@ -157,9 +241,9 @@ def signup(data: SignupRequest):
     }
 
 
-# =========================
+# =========================================================
 # LOGIN
-# =========================
+# =========================================================
 
 @router.post("/login")
 def login(data: LoginRequest):
@@ -167,20 +251,41 @@ def login(data: LoginRequest):
     conn = get_db()
     cursor = conn.cursor()
 
-    cursor.execute(
-        """
-        SELECT *
-        FROM users
-        WHERE email = ?
-        """,
-        (data.email,)
-    )
+    try:
 
-    user = cursor.fetchone()
+        if os.getenv("DATABASE_URL"):
 
-    conn.close()
+            cursor.execute(
+                """
+                SELECT *
+                FROM users
+                WHERE email = %s
+                """,
+                (data.email,)
+            )
 
-    # User doesn't exist
+        else:
+
+            cursor.execute(
+                """
+                SELECT *
+                FROM users
+                WHERE email = ?
+                """,
+                (data.email,)
+            )
+
+        user = cursor.fetchone()
+
+    finally:
+
+        cursor.close()
+        conn.close()
+
+    # -----------------------------------------------------
+    # USER DOESN'T EXIST
+    # -----------------------------------------------------
+
     if not user:
 
         raise HTTPException(
@@ -188,7 +293,10 @@ def login(data: LoginRequest):
             detail="Invalid email or password."
         )
 
-    # Verify password
+    # -----------------------------------------------------
+    # VERIFY PASSWORD
+    # -----------------------------------------------------
+
     password_correct = verify_password(
         data.password,
         user["password"]
@@ -210,107 +318,166 @@ def login(data: LoginRequest):
             "email": user["email"]
         }
     }
-# =========================
-# FORGOT PASSWORD
-# =========================
 
+
+# =========================================================
+# FORGOT PASSWORD
+# =========================================================
 
 @router.post("/forgot-password")
-async def forgot_password(data: ForgotPasswordRequest):
+async def forgot_password(
+    data: ForgotPasswordRequest
+):
 
     conn = get_db()
     cursor = conn.cursor()
 
-    # =========================
-    # FIND USER
-    # =========================
+    try:
 
-    cursor.execute(
-        """
-        SELECT id, email
-        FROM users
-        WHERE email = ?
-        """,
-        (data.email,)
-    )
+        # -------------------------------------------------
+        # FIND USER
+        # -------------------------------------------------
 
-    user = cursor.fetchone()
+        if os.getenv("DATABASE_URL"):
 
-    # =========================
-    # SECURITY
-    # =========================
+            cursor.execute(
+                """
+                SELECT id, email
+                FROM users
+                WHERE email = %s
+                """,
+                (data.email,)
+            )
 
-    if not user:
+        else:
 
+            cursor.execute(
+                """
+                SELECT id, email
+                FROM users
+                WHERE email = ?
+                """,
+                (data.email,)
+            )
+
+        user = cursor.fetchone()
+
+        # -------------------------------------------------
+        # SECURITY
+        # -------------------------------------------------
+
+        if not user:
+
+            return {
+                "success": True,
+                "message": (
+                    "If this email is registered, "
+                    "a recovery email has been sent."
+                )
+            }
+
+        # -------------------------------------------------
+        # TEMPORARY PASSWORD
+        # -------------------------------------------------
+
+        temporary_password = secrets.token_urlsafe(8)
+
+        hashed_password = hash_password(
+            temporary_password
+        )
+
+        # -------------------------------------------------
+        # RESET TOKEN
+        # -------------------------------------------------
+
+        reset_token = secrets.token_urlsafe(32)
+
+        reset_token_expiry = (
+            time.time() + (15 * 60)
+        )
+
+        # -------------------------------------------------
+        # SAVE PASSWORD + TOKEN
+        # -------------------------------------------------
+
+        if os.getenv("DATABASE_URL"):
+
+            cursor.execute(
+                """
+                UPDATE users
+
+                SET
+                    password = %s,
+                    reset_token = %s,
+                    reset_token_expiry = %s
+
+                WHERE id = %s
+                """,
+                (
+                    hashed_password,
+                    reset_token,
+                    reset_token_expiry,
+                    user["id"]
+                )
+            )
+
+        else:
+
+            cursor.execute(
+                """
+                UPDATE users
+
+                SET
+                    password = ?,
+                    reset_token = ?,
+                    reset_token_expiry = ?
+
+                WHERE id = ?
+                """,
+                (
+                    hashed_password,
+                    reset_token,
+                    reset_token_expiry,
+                    user["id"]
+                )
+            )
+
+        conn.commit()
+
+    except Exception as error:
+
+        conn.rollback()
+
+        print("FORGOT PASSWORD ERROR:", error)
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to process password recovery."
+        )
+
+    finally:
+
+        cursor.close()
         conn.close()
 
-        return {
-            "success": True,
-            "message": (
-                "If an account exists with this email, "
-                "a recovery email has been sent."
-            )
-        }
-
-    # =========================
-    # GENERATE TEMPORARY PASSWORD
-    # =========================
-
-    temporary_password = secrets.token_urlsafe(8)
-
-    # =========================
-    # HASH TEMPORARY PASSWORD
-    # =========================
-
-    hashed_password = hash_password(
-        temporary_password
-    )
-
-    # =========================
-    # GENERATE RESET TOKEN
-    # =========================
-
-    reset_token = secrets.token_urlsafe(32)
-
-    # Token valid for 15 minutes
-    reset_token_expiry = time.time() + (15 * 60)
-
-    # =========================
-    # SAVE PASSWORD + TOKEN
-    # =========================
-
-    cursor.execute(
-        """
-        UPDATE users
-        SET
-            password = ?,
-            reset_token = ?,
-            reset_token_expiry = ?
-        WHERE id = ?
-        """,
-        (
-            hashed_password,
-            reset_token,
-            reset_token_expiry,
-            user["id"]
-        )
-    )
-
-    conn.commit()
-    conn.close()
-
-    # =========================
+    # =====================================================
     # RESET LINK
-    # =========================
+    # =====================================================
+
+    # Local development
+    frontend_url = os.getenv(
+        "FRONTEND_URL",
+        "http://localhost:5173"
+    )
 
     reset_link = (
-        "http://localhost:5173/reset-password/"
-        + reset_token
+        f"{frontend_url}/reset-password/"
+        f"{reset_token}"
     )
 
-    # =========================
+    # =====================================================
     # SEND EMAIL
-    # =========================
+    # =====================================================
 
     message = MessageSchema(
         subject="SkillRoute AI - Password Recovery",
@@ -344,15 +511,7 @@ SkillRoute AI Team
         subtype="plain"
     )
 
-    # =========================
-    # SEND EMAIL
-    # =========================
-
     await fm.send_message(message)
-
-    # =========================
-    # RESPONSE
-    # =========================
 
     return {
         "success": True,
@@ -362,74 +521,150 @@ SkillRoute AI Team
         )
     }
 
-class ResetPasswordRequest(BaseModel):
-    token: str
-    new_password: str
 
+# =========================================================
+# RESET PASSWORD
+# =========================================================
 
 @router.post("/reset-password")
-def reset_password(data: ResetPasswordRequest):
+def reset_password(
+    data: ResetPasswordRequest
+):
 
     conn = get_db()
     cursor = conn.cursor()
 
-    # Find token
-    cursor.execute(
-        """
-        SELECT id
-        FROM users
-        WHERE reset_token = ?
-        AND reset_token_expiry > ?
-        """,
-        (
-            data.token,
-            time.time()
+    try:
+
+        # -------------------------------------------------
+        # FIND VALID TOKEN
+        # -------------------------------------------------
+
+        if os.getenv("DATABASE_URL"):
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM users
+
+                WHERE reset_token = %s
+                AND reset_token_expiry > %s
+                """,
+                (
+                    data.token,
+                    time.time()
+                )
+            )
+
+        else:
+
+            cursor.execute(
+                """
+                SELECT id
+                FROM users
+
+                WHERE reset_token = ?
+                AND reset_token_expiry > ?
+                """,
+                (
+                    data.token,
+                    time.time()
+                )
+            )
+
+        user = cursor.fetchone()
+
+        if not user:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid or expired reset link."
+            )
+
+        # -------------------------------------------------
+        # PASSWORD LENGTH
+        # -------------------------------------------------
+
+        if len(
+            data.new_password.encode("utf-8")
+        ) > 72:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Password must be 72 bytes or shorter."
+            )
+
+        # -------------------------------------------------
+        # HASH NEW PASSWORD
+        # -------------------------------------------------
+
+        hashed_password = hash_password(
+            data.new_password
         )
-    )
 
-    user = cursor.fetchone()
+        # -------------------------------------------------
+        # UPDATE PASSWORD
+        # -------------------------------------------------
 
-    if not user:
-        conn.close()
+        if os.getenv("DATABASE_URL"):
+
+            cursor.execute(
+                """
+                UPDATE users
+
+                SET
+                    password = %s,
+                    reset_token = NULL,
+                    reset_token_expiry = NULL
+
+                WHERE id = %s
+                """,
+                (
+                    hashed_password,
+                    user["id"]
+                )
+            )
+
+        else:
+
+            cursor.execute(
+                """
+                UPDATE users
+
+                SET
+                    password = ?,
+                    reset_token = NULL,
+                    reset_token_expiry = NULL
+
+                WHERE id = ?
+                """,
+                (
+                    hashed_password,
+                    user["id"]
+                )
+            )
+
+        conn.commit()
+
+    except HTTPException:
+        conn.rollback()
+        raise
+
+    except Exception as error:
+
+        conn.rollback()
+
+        print("RESET PASSWORD ERROR:", error)
 
         raise HTTPException(
-            status_code=400,
-            detail="Invalid or expired reset link."
+            status_code=500,
+            detail="Unable to reset password."
         )
 
-    # Password length check
-    if len(data.new_password.encode("utf-8")) > 72:
+    finally:
 
+        cursor.close()
         conn.close()
-
-        raise HTTPException(
-            status_code=400,
-            detail="Password must be 72 bytes or shorter."
-        )
-
-    # Hash new password
-    hashed_password = hash_password(
-        data.new_password
-    )
-
-    # Update password + remove token
-    cursor.execute(
-        """
-        UPDATE users
-        SET
-            password = ?,
-            reset_token = NULL,
-            reset_token_expiry = NULL
-        WHERE id = ?
-        """,
-        (
-            hashed_password,
-            user["id"]
-        )
-    )
-
-    conn.commit()
-    conn.close()
 
     return {
         "success": True,
