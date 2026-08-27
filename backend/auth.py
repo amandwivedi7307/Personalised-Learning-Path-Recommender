@@ -511,7 +511,13 @@ SkillRoute AI Team
         subtype="plain"
     )
 
-    await fm.send_message(message)
+    try:
+        await fm.send_message(message)
+        print("EMAIL SENT SUCCESSFULLY")
+
+    except Exception as e:
+        print("EMAIL ERROR:", repr(e))
+        raise
 
     return {
         "success": True,
