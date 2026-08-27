@@ -112,7 +112,7 @@ function Dashboard({ data, user }) {
 
 
         const response = await fetch(
-          `http://127.0.0.1:8000/progress/${userId}`
+          `https://skillroute-ai-qpwc.onrender.com/progress/${userId}`
         );
 
 
@@ -353,7 +353,7 @@ function Dashboard({ data, user }) {
 
 
       const response = await fetch(
-        "http://127.0.0.1:8000/progress",
+        "https://skillroute-ai-qpwc.onrender.com/progress",
         {
           method: "POST",
 

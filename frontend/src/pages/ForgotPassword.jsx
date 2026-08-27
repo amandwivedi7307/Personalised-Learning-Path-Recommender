@@ -22,7 +22,7 @@ function ForgotPassword({ onBack }) {
       setMessage("");
 
       const response = await fetch(
-        "http://127.0.0.1:8000/forgot-password",
+        "https://skillroute-ai-qpwc.onrender.com/forgot-password",
         {
           method: "POST",
 

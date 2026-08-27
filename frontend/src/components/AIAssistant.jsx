@@ -42,7 +42,7 @@ function AIAssistant({
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/assistant",
+        "https://skillroute-ai-qpwc.onrender.com/assistant",
         {
           method: "POST",
 

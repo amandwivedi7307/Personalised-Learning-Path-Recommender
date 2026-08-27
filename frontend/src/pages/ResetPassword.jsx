@@ -86,7 +86,7 @@ function ResetPassword({ onBack }) {
       // =========================
 
       const response = await fetch(
-        "http://127.0.0.1:8000/reset-password",
+        "https://skillroute-ai-qpwc.onrender.com/reset-password",
         {
           method: "POST",
 

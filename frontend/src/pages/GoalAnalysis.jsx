@@ -15,7 +15,7 @@ function GoalAnalysis({ goal, onAnalysisComplete }) {
     const analyzeGoal = async () => {
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/recommend",
+          "https://skillroute-ai-qpwc.onrender.com/recommend",
           {
             method: "POST",
             headers: {

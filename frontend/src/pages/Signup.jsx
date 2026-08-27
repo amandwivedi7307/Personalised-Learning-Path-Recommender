@@ -35,7 +35,7 @@ function Signup({ onSignup, onLogin, onBack }) {
 
     try {
       const response = await fetch(
-        "http://127.0.0.1:8000/signup",
+        "https://skillroute-ai-qpwc.onrender.com/signup",
         {
           method: "POST",
           headers: {
