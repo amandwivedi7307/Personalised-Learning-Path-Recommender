@@ -15,8 +15,16 @@ function Signup({ onSignup, onLogin, onBack }) {
 
     setError("");
 
-    // Basic validation
-    if (!name.trim() || !email.trim() || !password || !confirmPassword) {
+    // =========================
+    // BASIC VALIDATION
+    // =========================
+
+    if (
+      !name.trim() ||
+      !email.trim() ||
+      !password ||
+      !confirmPassword
+    ) {
       setError("Please fill in all fields.");
       return;
     }
@@ -34,13 +42,19 @@ function Signup({ onSignup, onLogin, onBack }) {
     setLoading(true);
 
     try {
+      // =========================
+      // SIGNUP API
+      // =========================
+
       const response = await fetch(
         "https://skillroute-ai-qpwc.onrender.com/signup",
         {
           method: "POST",
+
           headers: {
             "Content-Type": "application/json",
           },
+
           body: JSON.stringify({
             name: name.trim(),
             email: email.trim(),
@@ -51,13 +65,19 @@ function Signup({ onSignup, onLogin, onBack }) {
 
       const data = await response.json();
 
+      console.log("Signup status:", response.status);
+      console.log("Signup response:", data);
+
       if (!response.ok) {
         throw new Error(
           data.detail || "Unable to create account."
         );
       }
 
-      // Signup successful
+      // =========================
+      // SIGNUP SUCCESS
+      // =========================
+
       onSignup(data.user);
 
     } catch (err) {
@@ -65,7 +85,7 @@ function Signup({ onSignup, onLogin, onBack }) {
 
       setError(
         err.message ||
-        "Unable to connect with AI backend. Please make sure FastAPI is running."
+        "Unable to connect with the server."
       );
 
     } finally {
@@ -78,7 +98,10 @@ function Signup({ onSignup, onLogin, onBack }) {
 
       <div className="auth-card">
 
-        {/* LOGO */}
+        {/* =========================
+            LOGO
+        ========================= */}
+
         <div className="auth-logo">
 
           <div className="logo-icon">
@@ -90,7 +113,10 @@ function Signup({ onSignup, onLogin, onBack }) {
         </div>
 
 
-        {/* HEADER */}
+        {/* =========================
+            HEADER
+        ========================= */}
+
         <div className="auth-header">
 
           <h1>
@@ -104,7 +130,10 @@ function Signup({ onSignup, onLogin, onBack }) {
         </div>
 
 
-        {/* ERROR */}
+        {/* =========================
+            ERROR
+        ========================= */}
+
         {error && (
           <div className="auth-error">
             ⚠️ {error}
@@ -112,10 +141,14 @@ function Signup({ onSignup, onLogin, onBack }) {
         )}
 
 
-        {/* FORM */}
+        {/* =========================
+            FORM
+        ========================= */}
+
         <form onSubmit={handleSubmit}>
 
           {/* NAME */}
+
           <div className="auth-field">
 
             <label>
@@ -126,7 +159,9 @@ function Signup({ onSignup, onLogin, onBack }) {
               type="text"
               placeholder="Enter your name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) =>
+                setName(e.target.value)
+              }
               disabled={loading}
             />
 
@@ -134,6 +169,7 @@ function Signup({ onSignup, onLogin, onBack }) {
 
 
           {/* EMAIL */}
+
           <div className="auth-field">
 
             <label>
@@ -144,7 +180,9 @@ function Signup({ onSignup, onLogin, onBack }) {
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
               disabled={loading}
             />
 
@@ -152,6 +190,7 @@ function Signup({ onSignup, onLogin, onBack }) {
 
 
           {/* PASSWORD */}
+
           <div className="auth-field">
 
             <label>
@@ -162,7 +201,9 @@ function Signup({ onSignup, onLogin, onBack }) {
               type="password"
               placeholder="Create a password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
               disabled={loading}
             />
 
@@ -170,6 +211,7 @@ function Signup({ onSignup, onLogin, onBack }) {
 
 
           {/* CONFIRM PASSWORD */}
+
           <div className="auth-field">
 
             <label>
@@ -189,7 +231,10 @@ function Signup({ onSignup, onLogin, onBack }) {
           </div>
 
 
-          {/* SUBMIT */}
+          {/* =========================
+              SUBMIT
+          ========================= */}
+
           <button
             type="submit"
             className="auth-submit"
@@ -210,7 +255,10 @@ function Signup({ onSignup, onLogin, onBack }) {
         </form>
 
 
-        {/* LOGIN */}
+        {/* =========================
+            LOGIN
+        ========================= */}
+
         <div className="auth-divider">
           <span>OR</span>
         </div>
@@ -223,6 +271,7 @@ function Signup({ onSignup, onLogin, onBack }) {
           </span>
 
           <button
+            type="button"
             onClick={onLogin}
             disabled={loading}
           >
@@ -232,8 +281,12 @@ function Signup({ onSignup, onLogin, onBack }) {
         </div>
 
 
-        {/* BACK */}
+        {/* =========================
+            BACK
+        ========================= */}
+
         <button
+          type="button"
           className="auth-back"
           onClick={onBack}
           disabled={loading}

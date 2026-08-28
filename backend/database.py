@@ -1,10 +1,17 @@
 import os
 import sqlite3
+
 from dotenv import load_dotenv
+
+
+# =========================================================
+# ENVIRONMENT
+# =========================================================
 
 load_dotenv()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
+
 SQLITE_DATABASE = "skillroute.db"
 
 
@@ -17,6 +24,7 @@ def get_db():
     # -----------------------------------------------------
     # PRODUCTION → PostgreSQL / Neon
     # -----------------------------------------------------
+
     if DATABASE_URL:
 
         import psycopg2
@@ -29,11 +37,14 @@ def get_db():
 
         return conn
 
+
     # -----------------------------------------------------
     # LOCAL DEVELOPMENT → SQLite
     # -----------------------------------------------------
 
-    conn = sqlite3.connect(SQLITE_DATABASE)
+    conn = sqlite3.connect(
+        SQLITE_DATABASE
+    )
 
     conn.row_factory = sqlite3.Row
 
@@ -53,7 +64,9 @@ def init_db():
     if DATABASE_URL:
 
         conn = get_db()
+
         cursor = conn.cursor()
+
 
         # -------------------------------------------------
         # USERS TABLE
@@ -68,14 +81,11 @@ def init_db():
 
                 email TEXT UNIQUE NOT NULL,
 
-                password TEXT NOT NULL,
-
-                reset_token TEXT,
-
-                reset_token_expiry DOUBLE PRECISION
+                password TEXT NOT NULL
 
             )
         """)
+
 
         # -------------------------------------------------
         # COURSE PROGRESS TABLE
@@ -101,18 +111,24 @@ def init_db():
             )
         """)
 
+
         conn.commit()
+
         cursor.close()
+
         conn.close()
 
         return
+
 
     # =====================================================
     # SQLITE
     # =====================================================
 
     conn = get_db()
+
     cursor = conn.cursor()
+
 
     # -----------------------------------------------------
     # USERS TABLE
@@ -132,35 +148,6 @@ def init_db():
         )
     """)
 
-    # -----------------------------------------------------
-    # RESET TOKEN
-    # -----------------------------------------------------
-
-    try:
-
-        cursor.execute("""
-            ALTER TABLE users
-            ADD COLUMN reset_token TEXT
-        """)
-
-    except sqlite3.OperationalError:
-
-        pass
-
-    # -----------------------------------------------------
-    # RESET TOKEN EXPIRY
-    # -----------------------------------------------------
-
-    try:
-
-        cursor.execute("""
-            ALTER TABLE users
-            ADD COLUMN reset_token_expiry REAL
-        """)
-
-    except sqlite3.OperationalError:
-
-        pass
 
     # -----------------------------------------------------
     # COURSE PROGRESS TABLE
@@ -181,9 +168,12 @@ def init_db():
 
             FOREIGN KEY(user_id)
                 REFERENCES users(id)
+                ON DELETE CASCADE
 
         )
     """)
 
+
     conn.commit()
+
     conn.close()

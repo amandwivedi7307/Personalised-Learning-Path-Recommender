@@ -5,7 +5,6 @@ function Login({
   onLogin,
   onSignup,
   onBack,
-  onForgotPassword,
 }) {
 
   const [email, setEmail] = useState("");
@@ -51,7 +50,7 @@ function Login({
           },
 
           body: JSON.stringify({
-            email: email,
+            email: email.trim(),
             password: password,
           }),
         }
@@ -81,7 +80,7 @@ function Login({
 
     } catch (err) {
 
-      console.error(err);
+      console.error("Login error:", err);
 
       setError(
         err.message ||
@@ -167,6 +166,7 @@ function Login({
               Email
             </label>
 
+
             <input
               type="email"
               placeholder="Enter your email"
@@ -189,6 +189,7 @@ function Login({
               Password
             </label>
 
+
             <input
               type="password"
               placeholder="Enter your password"
@@ -204,7 +205,7 @@ function Login({
 
 
           {/* =========================
-              OPTIONS
+              REMEMBER ME
           ========================= */}
 
           <div className="auth-options">
@@ -218,20 +219,6 @@ function Login({
               Remember me
 
             </label>
-
-
-            {/* FORGOT PASSWORD */}
-
-            <button
-              type="button"
-              className="forgot-password"
-              onClick={onForgotPassword}
-              disabled={loading}
-            >
-
-              Forgot password?
-
-            </button>
 
           </div>
 

@@ -4,9 +4,8 @@ import GoalInput from "./pages/GoalInput";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
+
 import "./App.css";
-import ResetPassword from "./pages/ResetPassword";
-import ForgotPassword from "./pages/ForgotPassword";
 
 
 function App() {
@@ -17,22 +16,29 @@ function App() {
     login
     signup
     goal
+    dashboard
   */
 
+
+  // =========================
+  // PAGE STATE
+  // =========================
+
   const [page, setPage] = useState(() => {
-
-    const path = window.location.pathname;
-
-    if (path.startsWith("/reset-password/")) {
-      return "reset-password";
-    }
 
     return "home";
 
   });
 
+
+  // =========================
+  // USER STATE
+  // =========================
+
   const [user, setUser] = useState(null);
-  const [dashboardData, setDashboardData] = useState(null);
+
+  const [dashboardData, setDashboardData] =
+    useState(null);
 
 
   // =========================
@@ -41,9 +47,14 @@ function App() {
 
   const handleLogin = (userData) => {
 
-    console.log("LOGIN USER:", userData);
+    console.log(
+      "LOGIN USER:",
+      userData
+    );
+
 
     setUser(userData);
+
 
     if (userData?.id) {
 
@@ -53,6 +64,7 @@ function App() {
       );
 
     }
+
 
     setPage("goal");
 
@@ -65,9 +77,14 @@ function App() {
 
   const handleSignup = (userData) => {
 
-    console.log("SIGNUP USER:", userData);
+    console.log(
+      "SIGNUP USER:",
+      userData
+    );
+
 
     setUser(userData);
+
 
     if (userData?.id) {
 
@@ -78,37 +95,10 @@ function App() {
 
     }
 
+
     setPage("goal");
 
   };
-  // =========================
-  // FORGOT PASSWORD
-  // =========================
-
-  if (page === "forgot-password") {
-
-    return (
-      <ForgotPassword
-        onBack={() => {
-          setPage("login");
-        }}
-      />
-    );
-
-  }
-  // =========================
-  // RESET PASSWORD PAGE
-  // =========================
-
-  if (page === "reset-password") {
-    return (
-      <ResetPassword
-        onBack={() => {
-          setPage("login");
-        }}
-      />
-    );
-  }
 
 
   // =========================
@@ -116,27 +106,48 @@ function App() {
   // =========================
 
   if (page === "goal") {
+
     return (
+
       <GoalInput
+
         user={user}
+
         onAnalysisComplete={(analysisData) => {
-          setDashboardData(analysisData);
+
+          setDashboardData(
+            analysisData
+          );
+
           setPage("dashboard");
+
         }}
+
       />
+
     );
+
   }
+
+
   // =========================
   // DASHBOARD PAGE
   // =========================
 
   if (page === "dashboard") {
+
     return (
+
       <Dashboard
+
         data={dashboardData}
+
         user={user}
+
       />
+
     );
+
   }
 
 
@@ -147,21 +158,27 @@ function App() {
   if (page === "login") {
 
     return (
+
       <Login
+
         onLogin={handleLogin}
 
+
         onSignup={() => {
+
           setPage("signup");
+
         }}
+
 
         onBack={() => {
+
           setPage("home");
+
         }}
 
-        onForgotPassword={() => {
-          setPage("forgot-password");
-        }}
       />
+
     );
 
   }
@@ -174,17 +191,27 @@ function App() {
   if (page === "signup") {
 
     return (
+
       <Signup
+
         onSignup={handleSignup}
 
+
         onLogin={() => {
+
           setPage("login");
+
         }}
 
+
         onBack={() => {
+
           setPage("home");
+
         }}
+
       />
+
     );
 
   }
@@ -223,9 +250,10 @@ function App() {
             Product
           </a>
 
+
           <a href="#how-it-works">
-            
           </a>
+
 
           <a href="#features">
             Features
@@ -240,22 +268,34 @@ function App() {
           {/* SIGN IN */}
 
           <button
+
             className="signin-btn"
+
             onClick={() => {
+
               setPage("login");
+
             }}
+
           >
+
             Sign In
+
           </button>
 
 
           {/* GET STARTED */}
 
           <button
+
             className="nav-cta"
+
             onClick={() => {
+
               setPage("signup");
+
             }}
+
           >
 
             Get Started
@@ -265,6 +305,7 @@ function App() {
             </span>
 
           </button>
+
 
         </div>
 
@@ -277,8 +318,11 @@ function App() {
       ========================= */}
 
       <section
+
         className="hero"
+
         id="product"
+
       >
 
 
@@ -286,7 +330,9 @@ function App() {
 
 
           <div className="eyebrow">
+
             ✨ AI Powered. Personalized. Purposeful.
+
           </div>
 
 
@@ -295,7 +341,9 @@ function App() {
             AI that builds your
 
             <span>
+
               {" "}learning path,
+
             </span>
 
             <br />
@@ -320,10 +368,15 @@ function App() {
             {/* BUILD LEARNING PATH */}
 
             <button
+
               className="primary-btn"
+
               onClick={() => {
+
                 setPage("signup");
+
               }}
+
             >
 
               Build My Learning Path
@@ -344,6 +397,7 @@ function App() {
               See how it works
 
             </button>
+
 
           </div>
 
@@ -480,41 +534,65 @@ function App() {
       ========================= */}
 
       <section
+
         className="features"
+
         id="features"
+
       >
 
 
         <Feature
+
           icon="🧠"
+
           title="AI Personalized Roadmaps"
+
           text="Your goals. Your pace. Your perfect path."
+
           color="purple"
+
         />
 
 
         <Feature
+
           icon="◔"
+
           title="Skill Gap Analysis"
+
           text="Know what you know. Discover what to learn."
+
           color="blue"
+
         />
 
 
         <Feature
+
           icon="ϟ"
+
           title="Adaptive Learning"
+
           text="Recommendations that adapt as you improve."
+
           color="green"
+
         />
 
 
         <Feature
+
           icon="💬"
+
           title="AI Learning Assistant"
+
           text="24/7 help, doubts and career guidance."
+
           color="orange"
+
         />
+
 
       </section>
 
@@ -616,9 +694,13 @@ function Feature({
 
 
       <div
+
         className={`feature-icon ${color}`}
+
       >
+
         {icon}
+
       </div>
 
 
