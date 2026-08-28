@@ -4,7 +4,7 @@ import bcrypt
 import secrets
 import time
 import os
-
+import requests
 from dotenv import load_dotenv
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 
@@ -20,21 +20,103 @@ router = APIRouter()
 # EMAIL CONFIGURATION
 # =========================================================
 
-mail_config = ConnectionConfig(
-    MAIL_USERNAME=os.getenv("MAIL_USERNAME"),
-    MAIL_PASSWORD=os.getenv("MAIL_PASSWORD"),
-    MAIL_FROM=os.getenv("MAIL_FROM"),
+def send_reset_email(to_email, reset_link):
 
-    MAIL_PORT=int(os.getenv("MAIL_PORT", "587")),
-    MAIL_SERVER=os.getenv("MAIL_SERVER", "smtp.gmail.com"),
+    api_key = os.getenv("BREVO_API_KEY")
 
-    MAIL_STARTTLS=True,
-    MAIL_SSL_TLS=False,
+    if not api_key:
+        raise ValueError("BREVO_API_KEY not found")
 
-    USE_CREDENTIALS=True,
-)
+    payload = {
 
-fm = FastMail(mail_config)
+        "sender": {
+            "name": "SkillRoute AI",
+            "email": os.getenv("MAIL_FROM")
+        },
+
+        "to": [
+            {
+                "email": to_email
+            }
+        ],
+
+        "subject": "SkillRoute AI - Reset Your Password",
+
+        "htmlContent": f"""
+        <html>
+        <body>
+
+            <h2>Reset Your Password</h2>
+
+            <p>Hello,</p>
+
+            <p>
+                We received a request to reset your
+                SkillRoute AI password.
+            </p>
+
+            <p>
+                Click the button below to reset your password:
+            </p>
+
+            <p>
+                <a href="{reset_link}">
+                    Reset Password
+                </a>
+            </p>
+
+            <p>
+                This reset link will expire in 15 minutes.
+            </p>
+
+            <p>
+                If you did not request this,
+                you can safely ignore this email.
+            </p>
+
+            <p>
+                Thanks,<br>
+                SkillRoute AI
+            </p>
+
+        </body>
+        </html>
+        """
+    }
+
+    response = requests.post(
+
+        "https://api.brevo.com/v3/smtp/email",
+
+        headers={
+
+            "accept": "application/json",
+
+            "api-key": api_key,
+
+            "content-type": "application/json"
+
+        },
+
+        json=payload,
+
+        timeout=20
+
+    )
+
+    print(
+        "BREVO STATUS:",
+        response.status_code
+    )
+
+    print(
+        "BREVO RESPONSE:",
+        response.text
+    )
+
+    response.raise_for_status()
+
+    return response.json()
 
 
 # =========================================================
@@ -43,14 +125,21 @@ fm = FastMail(mail_config)
 
 def hash_password(password: str) -> str:
 
-    password_bytes = password.encode("utf-8")
-
-    hashed = bcrypt.hashpw(
-        password_bytes,
-        bcrypt.gensalt()
+    password_bytes = password.encode(
+        "utf-8"
     )
 
-    return hashed.decode("utf-8")
+    hashed = bcrypt.hashpw(
+
+        password_bytes,
+
+        bcrypt.gensalt()
+
+    )
+
+    return hashed.decode(
+        "utf-8"
+    )
 
 
 def verify_password(
@@ -59,8 +148,15 @@ def verify_password(
 ) -> bool:
 
     return bcrypt.checkpw(
-        password.encode("utf-8"),
-        hashed_password.encode("utf-8")
+
+        password.encode(
+            "utf-8"
+        ),
+
+        hashed_password.encode(
+            "utf-8"
+        )
+
     )
 
 
@@ -71,13 +167,16 @@ def verify_password(
 class SignupRequest(BaseModel):
 
     name: str
+
     email: str
+
     password: str
 
 
 class LoginRequest(BaseModel):
 
     email: str
+
     password: str
 
 
@@ -89,6 +188,7 @@ class ForgotPasswordRequest(BaseModel):
 class ResetPasswordRequest(BaseModel):
 
     token: str
+
     new_password: str
 
 
@@ -100,6 +200,7 @@ class ResetPasswordRequest(BaseModel):
 def signup(data: SignupRequest):
 
     conn = get_db()
+
     cursor = conn.cursor()
 
     try:
@@ -116,6 +217,7 @@ def signup(data: SignupRequest):
                 FROM users
                 WHERE email = %s
                 """,
+
                 (data.email,)
             )
 
@@ -127,6 +229,7 @@ def signup(data: SignupRequest):
                 FROM users
                 WHERE email = ?
                 """,
+
                 (data.email,)
             )
 
@@ -135,19 +238,33 @@ def signup(data: SignupRequest):
         if existing_user:
 
             raise HTTPException(
+
                 status_code=400,
-                detail="An account with this email already exists."
+
+                detail=(
+                    "An account with this email "
+                    "already exists."
+                )
+
             )
 
         # -------------------------------------------------
         # PASSWORD LENGTH
         # -------------------------------------------------
 
-        if len(data.password.encode("utf-8")) > 72:
+        if len(
+            data.password.encode("utf-8")
+        ) > 72:
 
             raise HTTPException(
+
                 status_code=400,
-                detail="Password must be 72 bytes or shorter."
+
+                detail=(
+                    "Password must be "
+                    "72 bytes or shorter."
+                )
+
             )
 
         # -------------------------------------------------
@@ -177,6 +294,7 @@ def signup(data: SignupRequest):
 
                 RETURNING id
                 """,
+
                 (
                     data.name,
                     data.email,
@@ -199,6 +317,7 @@ def signup(data: SignupRequest):
 
                 VALUES (?, ?, ?)
                 """,
+
                 (
                     data.name,
                     data.email,
@@ -211,33 +330,50 @@ def signup(data: SignupRequest):
         conn.commit()
 
     except HTTPException:
+
         conn.rollback()
+
         raise
 
     except Exception as error:
 
         conn.rollback()
 
-        print("SIGNUP ERROR:", error)
+        print(
+            "SIGNUP ERROR:",
+            error
+        )
 
         raise HTTPException(
+
             status_code=500,
+
             detail="Unable to create account."
+
         )
 
     finally:
 
         cursor.close()
+
         conn.close()
 
     return {
+
         "success": True,
+
         "message": "Account created successfully.",
+
         "user": {
+
             "id": user_id,
+
             "name": data.name,
+
             "email": data.email
+
         }
+
     }
 
 
@@ -249,6 +385,7 @@ def signup(data: SignupRequest):
 def login(data: LoginRequest):
 
     conn = get_db()
+
     cursor = conn.cursor()
 
     try:
@@ -261,6 +398,7 @@ def login(data: LoginRequest):
                 FROM users
                 WHERE email = %s
                 """,
+
                 (data.email,)
             )
 
@@ -272,6 +410,7 @@ def login(data: LoginRequest):
                 FROM users
                 WHERE email = ?
                 """,
+
                 (data.email,)
             )
 
@@ -280,6 +419,7 @@ def login(data: LoginRequest):
     finally:
 
         cursor.close()
+
         conn.close()
 
     # -----------------------------------------------------
@@ -289,8 +429,11 @@ def login(data: LoginRequest):
     if not user:
 
         raise HTTPException(
+
             status_code=401,
+
             detail="Invalid email or password."
+
         )
 
     # -----------------------------------------------------
@@ -298,25 +441,39 @@ def login(data: LoginRequest):
     # -----------------------------------------------------
 
     password_correct = verify_password(
+
         data.password,
+
         user["password"]
+
     )
 
     if not password_correct:
 
         raise HTTPException(
+
             status_code=401,
+
             detail="Invalid email or password."
+
         )
 
     return {
+
         "success": True,
+
         "message": "Login successful.",
+
         "user": {
+
             "id": user["id"],
+
             "name": user["name"],
+
             "email": user["email"]
+
         }
+
     }
 
 
@@ -330,6 +487,7 @@ async def forgot_password(
 ):
 
     conn = get_db()
+
     cursor = conn.cursor()
 
     try:
@@ -346,6 +504,7 @@ async def forgot_password(
                 FROM users
                 WHERE email = %s
                 """,
+
                 (data.email,)
             )
 
@@ -357,6 +516,7 @@ async def forgot_password(
                 FROM users
                 WHERE email = ?
                 """,
+
                 (data.email,)
             )
 
@@ -369,11 +529,14 @@ async def forgot_password(
         if not user:
 
             return {
+
                 "success": True,
+
                 "message": (
                     "If this email is registered, "
                     "a recovery email has been sent."
                 )
+
             }
 
         # -------------------------------------------------
@@ -413,6 +576,7 @@ async def forgot_password(
 
                 WHERE id = %s
                 """,
+
                 (
                     hashed_password,
                     reset_token,
@@ -434,6 +598,7 @@ async def forgot_password(
 
                 WHERE id = ?
                 """,
+
                 (
                     hashed_password,
                     reset_token,
@@ -448,46 +613,67 @@ async def forgot_password(
 
         conn.rollback()
 
-        print("FORGOT PASSWORD ERROR:", error)
+        print(
+            "FORGOT PASSWORD ERROR:",
+            error
+        )
 
         raise HTTPException(
+
             status_code=500,
-            detail="Unable to process password recovery."
+
+            detail=(
+                "Unable to process "
+                "password recovery."
+            )
+
         )
 
     finally:
 
         cursor.close()
+
         conn.close()
 
     # =====================================================
     # RESET LINK
     # =====================================================
 
-    # Local development
     frontend_url = os.getenv(
+
         "FRONTEND_URL",
+
         "http://localhost:5173"
+
     )
 
     reset_link = (
+
         f"{frontend_url}/reset-password/"
+
         f"{reset_token}"
+
     )
 
     # =====================================================
-    # SEND EMAIL
+    # EXISTING EMAIL MESSAGE
     # =====================================================
 
     message = MessageSchema(
-        subject="SkillRoute AI - Password Recovery",
 
-        recipients=[user["email"]],
+        subject=(
+            "SkillRoute AI - Password Recovery"
+        ),
+
+        recipients=[
+            user["email"]
+        ],
 
         body=f"""
 Hello,
 
-We received a request to recover your SkillRoute AI account.
+We received a request to recover your
+SkillRoute AI account.
 
 Your temporary password is:
 
@@ -495,7 +681,8 @@ Your temporary password is:
 
 You can use this temporary password to login.
 
-You can also create a new password using the link below:
+You can also create a new password
+using the link below:
 
 {reset_link}
 
@@ -509,22 +696,51 @@ SkillRoute AI Team
 """,
 
         subtype="plain"
+
     )
 
+    # =====================================================
+    # SEND EMAIL THROUGH BREVO
+    # =====================================================
+
     try:
-        await fm.send_message(message)
-        print("EMAIL SENT SUCCESSFULLY")
+
+        send_reset_email(
+
+            to_email=data.email,
+
+            reset_link=reset_link
+
+        )
+
+        print(
+            "EMAIL SENT SUCCESSFULLY"
+        )
 
     except Exception as e:
-        print("EMAIL ERROR:", repr(e))
-        raise
+
+        print(
+            "EMAIL ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail="Unable to send recovery email."
+
+        )
 
     return {
+
         "success": True,
+
         "message": (
             "If this email is registered, "
-            "a recovery email has been sent."
+            "a password recovery email has been sent."
         )
+
     }
 
 
@@ -538,6 +754,7 @@ def reset_password(
 ):
 
     conn = get_db()
+
     cursor = conn.cursor()
 
     try:
@@ -554,12 +771,15 @@ def reset_password(
                 FROM users
 
                 WHERE reset_token = %s
+
                 AND reset_token_expiry > %s
                 """,
+
                 (
                     data.token,
                     time.time()
                 )
+
             )
 
         else:
@@ -570,12 +790,15 @@ def reset_password(
                 FROM users
 
                 WHERE reset_token = ?
+
                 AND reset_token_expiry > ?
                 """,
+
                 (
                     data.token,
                     time.time()
                 )
+
             )
 
         user = cursor.fetchone()
@@ -583,8 +806,14 @@ def reset_password(
         if not user:
 
             raise HTTPException(
+
                 status_code=400,
-                detail="Invalid or expired reset link."
+
+                detail=(
+                    "Invalid or expired "
+                    "reset link."
+                )
+
             )
 
         # -------------------------------------------------
@@ -596,8 +825,14 @@ def reset_password(
         ) > 72:
 
             raise HTTPException(
+
                 status_code=400,
-                detail="Password must be 72 bytes or shorter."
+
+                detail=(
+                    "Password must be "
+                    "72 bytes or shorter."
+                )
+
             )
 
         # -------------------------------------------------
@@ -625,10 +860,12 @@ def reset_password(
 
                 WHERE id = %s
                 """,
+
                 (
                     hashed_password,
                     user["id"]
                 )
+
             )
 
         else:
@@ -644,35 +881,51 @@ def reset_password(
 
                 WHERE id = ?
                 """,
+
                 (
                     hashed_password,
                     user["id"]
                 )
+
             )
 
         conn.commit()
 
     except HTTPException:
+
         conn.rollback()
+
         raise
 
     except Exception as error:
 
         conn.rollback()
 
-        print("RESET PASSWORD ERROR:", error)
+        print(
+            "RESET PASSWORD ERROR:",
+            error
+        )
 
         raise HTTPException(
+
             status_code=500,
+
             detail="Unable to reset password."
+
         )
 
     finally:
 
         cursor.close()
+
         conn.close()
 
     return {
+
         "success": True,
-        "message": "Password reset successfully."
+
+        "message": (
+            "Password reset successfully."
+        )
+
     }
