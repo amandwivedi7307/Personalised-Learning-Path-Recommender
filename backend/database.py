@@ -37,7 +37,6 @@ def get_db():
 
         return conn
 
-
     # -----------------------------------------------------
     # LOCAL DEVELOPMENT → SQLite
     # -----------------------------------------------------
@@ -64,9 +63,7 @@ def init_db():
     if DATABASE_URL:
 
         conn = get_db()
-
         cursor = conn.cursor()
-
 
         # -------------------------------------------------
         # USERS TABLE
@@ -81,11 +78,14 @@ def init_db():
 
                 email TEXT UNIQUE NOT NULL,
 
-                password TEXT NOT NULL
+                password TEXT NOT NULL,
+
+                reset_token TEXT,
+
+                reset_token_expiry DOUBLE PRECISION
 
             )
         """)
-
 
         # -------------------------------------------------
         # COURSE PROGRESS TABLE
@@ -111,24 +111,19 @@ def init_db():
             )
         """)
 
-
         conn.commit()
 
         cursor.close()
-
         conn.close()
 
         return
-
 
     # =====================================================
     # SQLITE
     # =====================================================
 
     conn = get_db()
-
     cursor = conn.cursor()
-
 
     # -----------------------------------------------------
     # USERS TABLE
@@ -148,6 +143,35 @@ def init_db():
         )
     """)
 
+    # -----------------------------------------------------
+    # RESET TOKEN
+    # -----------------------------------------------------
+
+    try:
+
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN reset_token TEXT
+        """)
+
+    except sqlite3.OperationalError:
+
+        pass
+
+    # -----------------------------------------------------
+    # RESET TOKEN EXPIRY
+    # -----------------------------------------------------
+
+    try:
+
+        cursor.execute("""
+            ALTER TABLE users
+            ADD COLUMN reset_token_expiry REAL
+        """)
+
+    except sqlite3.OperationalError:
+
+        pass
 
     # -----------------------------------------------------
     # COURSE PROGRESS TABLE
@@ -172,7 +196,6 @@ def init_db():
 
         )
     """)
-
 
     conn.commit()
 
